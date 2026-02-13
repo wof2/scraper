@@ -1,9 +1,12 @@
 package com.scraper.adapter.in;
 
+import com.scraper.Config;
 import com.scraper.domain.model.Product;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
@@ -15,46 +18,49 @@ import java.util.List;
 
 public class WebMagicCrawlerAdapter implements PageProcessor {
 
-    private final String productUrlPrefix;
-    private final String followUrlRegex;
+    private static final Logger log = LoggerFactory.getLogger(WebMagicCrawlerAdapter.class);
+
+    private final Config config;
     private final List<Product> products = Collections.synchronizedList(new ArrayList<>());
+    private final Site site;
 
-    private final Site site = Site.me()
-            .setRetryTimes(3)
-            .setSleepTime(1000)
-            .setUserAgent("Mozilla/5.0");
-
-    public WebMagicCrawlerAdapter(String productUrlPrefix, String followUrlRegex) {
-        this.productUrlPrefix = productUrlPrefix;
-        this.followUrlRegex = followUrlRegex;
+    public WebMagicCrawlerAdapter(Config config) {
+        this.config = config;
+        this.site = Site.me()
+                .setRetryTimes(config.retryTimes())
+                .setSleepTime(config.sleepTime())
+                .setUserAgent(config.userAgent());
     }
 
     @Override
     public void process(Page page) {
         // Follow all links within the test site
         page.addTargetRequests(page.getHtml().links()
-                .regex(followUrlRegex)
+                .regex(config.followUrlRegex())
                 .all());
 
-        // Only extract product data from product pages
-        if (!page.getUrl().toString().startsWith(productUrlPrefix)) {
+        if (!page.getUrl().toString().startsWith(config.productUrlPrefix())) {
             page.setSkip(true);
             return;
         }
 
+        log.info("Processing product page: {}", page.getUrl());
+
         Document doc = page.getHtml().getDocument();
 
-        String name = extractText(doc, "h1");
+        String name = extractText(doc, config.selectors().name());
         if (name.isEmpty()) {
             page.setSkip(true);
             return;
         }
 
-        String description = extractText(doc, ".description, .product-description, [itemprop=description]");
+        String description = extractText(doc, config.selectors().description());
         BigDecimal price = parsePrice(doc);
         List<String> colors = parseColors(doc);
 
-        products.add(new Product(name, description, price, colors));
+        Product product = new Product(name, description, price, colors);
+        log.info("Scraped product: {} | price: {}", name, price);
+        products.add(product);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class WebMagicCrawlerAdapter implements PageProcessor {
     }
 
     private BigDecimal parsePrice(Document doc) {
-        Element priceEl = doc.selectFirst(".price, [itemprop=price], .product-price");
+        Element priceEl = doc.selectFirst(config.selectors().price());
         if (priceEl == null) {
             return BigDecimal.ZERO;
         }
@@ -84,18 +90,12 @@ public class WebMagicCrawlerAdapter implements PageProcessor {
     }
 
     private List<String> parseColors(Document doc) {
-        Elements colorEls = doc.select(".color-option, .color-swatch, [data-color]");
-        if (colorEls.size() <= 1) {
-            return List.of();
-        }
+        Elements colorEls = doc.select(config.selectors().colors());
         List<String> colors = new ArrayList<>();
         for (Element el : colorEls) {
-            String color = el.attr("data-color");
-            if (color.isEmpty()) {
-                color = el.text().trim();
-            }
-            if (!color.isEmpty()) {
-                colors.add(color);
+            String value = el.attr("value").trim();
+            if (!value.isEmpty()) {
+                colors.add(value);
             }
         }
         return colors;

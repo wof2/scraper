@@ -2,6 +2,15 @@
   "seedUrl": "https://webscraper.io/test-sites/e-commerce/static",
   "productUrlPrefix": "https://webscraper.io/test-sites/e-commerce/static/product/",
   "followUrlRegex": "https://webscraper\\.io/test-sites/e-commerce/static/.*",
+  "threads": 5,
+  "retryTimes": 3,
+  "sleepTime": 1000,
+  "userAgent": "Mozilla/5.0",
   "outputFile": "products.json",
-  "threads": 5
+  "selectors": {
+    "name": "div.caption h4.title.card-title",
+    "description": "p.description.card-text",
+    "price": "span[itemprop=price]",
+    "colors": "select[aria-label=color] option.dropdown-item"
+  }
 }

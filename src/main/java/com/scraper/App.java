@@ -11,22 +11,18 @@ import java.io.IOException;
 
 public class App {
 
-    public static void main(String[] args) throws IOException {
+    static void main(String[] args) throws IOException {
         File configFile = new File("config.json");
         if (!configFile.exists()) {
             System.err.println("config.json not found in working directory");
             System.exit(1);
         }
 
-        record Config(String seedUrl, String productUrlPrefix, String followUrlRegex,
-                      String outputFile, int threads) {}
-
         Config config = new ObjectMapper().readValue(configFile, Config.class);
 
         ProductExporterPort exporter = new JsonFileExporter(config.outputFile());
-        CrawlProductsPort useCase = new CrawlProductsService(
-                exporter, config.threads(), config.productUrlPrefix(), config.followUrlRegex());
+        CrawlProductsPort crawlService = new CrawlProductsService(config, exporter);
 
-        useCase.crawl(config.seedUrl());
+        crawlService.crawl(config.seedUrl());
     }
 }
