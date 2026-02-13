@@ -33,6 +33,7 @@ dependencies {
 
     testImplementation("org.mockito:mockito-core:5.15.2")
     testImplementation("org.mockito:mockito-junit-jupiter:5.15.2")
+    testImplementation("org.assertj:assertj-core:3.27.3")
 }
 
 tasks.test {

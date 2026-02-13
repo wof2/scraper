@@ -14,10 +14,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static java.math.BigDecimal.ZERO;
 
 public class JsonFileExporter implements ProductExporterPort {
 
@@ -35,7 +37,7 @@ public class JsonFileExporter implements ProductExporterPort {
 
     private abstract static class ProductMixin {
         @JsonIgnore
-        abstract java.util.List<String> memory();
+        abstract List<String> memory();
     }
 
     @Override
@@ -43,7 +45,7 @@ public class JsonFileExporter implements ProductExporterPort {
         BigDecimal total = products.stream()
                 .map(Product::price)
                 .distinct()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(ZERO, BigDecimal::add);
 
         try {
             mapper.writeValue(outputFile, Map.of(
