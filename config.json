@@ -11,6 +11,7 @@
     "name": "div.caption h4.title.card-title",
     "description": "p.description.card-text",
     "price": "span[itemprop=price]",
-    "colors": "select[aria-label=color] option.dropdown-item"
+    "colors": "select[aria-label=color] option.dropdown-item",
+    "memory": "label.memory button"
   }
 }

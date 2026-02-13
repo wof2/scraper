@@ -1,5 +1,6 @@
 package com.scraper.adapter.out;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.scraper.domain.model.Product;
@@ -16,6 +17,8 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+
 public class JsonFileExporter implements ProductExporterPort {
 
     private static final Logger log = LoggerFactory.getLogger(JsonFileExporter.class);
@@ -25,7 +28,14 @@ public class JsonFileExporter implements ProductExporterPort {
 
     public JsonFileExporter(String filePath) {
         this.outputFile = new File(filePath);
-        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        this.mapper = new ObjectMapper()
+                .enable(INDENT_OUTPUT)
+                .addMixIn(Product.class, ProductMixin.class);
+    }
+
+    private abstract static class ProductMixin {
+        @JsonIgnore
+        abstract java.util.List<String> memory();
     }
 
     @Override

@@ -16,12 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.synchronizedList;
+
 public class WebMagicCrawlerAdapter implements PageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(WebMagicCrawlerAdapter.class);
 
     private final Config config;
-    private final List<Product> products = Collections.synchronizedList(new ArrayList<>());
+    private final List<Product> products = synchronizedList(new ArrayList<>());
     private final Site site;
 
     public WebMagicCrawlerAdapter(Config config) {
@@ -57,8 +59,9 @@ public class WebMagicCrawlerAdapter implements PageProcessor {
         String description = extractText(doc, config.selectors().description());
         BigDecimal price = parsePrice(doc);
         List<String> colors = parseColors(doc);
+        List<String> memory = parseMemory(doc);
 
-        Product product = new Product(name, description, price, colors);
+        Product product = new Product(name, description, price, colors, memory);
         log.info("Scraped product: {} | price: {}", name, price);
         products.add(product);
     }
@@ -99,5 +102,17 @@ public class WebMagicCrawlerAdapter implements PageProcessor {
             }
         }
         return colors;
+    }
+
+    private List<String> parseMemory(Document doc) {
+        Elements memoryEls = doc.select(config.selectors().memory());
+        List<String> memory = new ArrayList<>();
+        for (Element el : memoryEls) {
+            String value = el.attr("value").trim();
+            if (!value.isEmpty()) {
+                memory.add(value);
+            }
+        }
+        return memory;
     }
 }

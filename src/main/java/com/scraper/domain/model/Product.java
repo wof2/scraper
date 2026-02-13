@@ -7,6 +7,7 @@ public record Product(
         String name,
         String description,
         BigDecimal price,
-        List<String> colors
+        List<String> colors,
+        List<String> memory
 ) {
 }

@@ -15,7 +15,8 @@ public record Config(
             String name,
             String description,
             String price,
-            String colors
+            String colors,
+            String memory
     ) {
     }
 }
