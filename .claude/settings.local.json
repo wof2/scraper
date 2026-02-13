@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd.exe /c \"cd /d G:\\\\Projekty\\\\scraper && .\\\\gradlew.bat build\")",
+      "WebSearch",
+      "Bash(powershell -Command \"cd ''G:\\\\Projekty\\\\scraper''; .\\\\gradlew.bat build\")",
+      "Bash(powershell:*)"
+    ]
+  }
+}
