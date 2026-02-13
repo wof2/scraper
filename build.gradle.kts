@@ -24,6 +24,7 @@ dependencies {
     implementation("us.codecraft:webmagic-core:1.0.3")
     implementation("us.codecraft:webmagic-extension:1.0.3")
     implementation("org.jsoup:jsoup:1.22.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")

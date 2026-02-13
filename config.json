@@ -1,0 +1,7 @@
+{
+  "seedUrl": "https://webscraper.io/test-sites/e-commerce/static",
+  "productUrlPrefix": "https://webscraper.io/test-sites/e-commerce/static/product/",
+  "followUrlRegex": "https://webscraper\\.io/test-sites/e-commerce/static/.*",
+  "outputFile": "products.json",
+  "threads": 5
+}
