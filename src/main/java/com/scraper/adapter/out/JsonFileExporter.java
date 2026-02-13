@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
@@ -39,7 +39,7 @@ public class JsonFileExporter implements ProductExporterPort {
     }
 
     @Override
-    public void export(List<Product> products) {
+    public void export(Set<Product> products) {
         BigDecimal total = products.stream()
                 .map(Product::price)
                 .distinct()

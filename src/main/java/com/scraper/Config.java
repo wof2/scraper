@@ -9,6 +9,7 @@ public record Config(
         int sleepTime,
         String userAgent,
         String outputFile,
+        String memorySuffix,
         Selectors selectors
 ) {
     public record Selectors(

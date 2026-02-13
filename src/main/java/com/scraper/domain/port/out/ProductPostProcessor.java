@@ -4,6 +4,6 @@ import com.scraper.domain.model.Product;
 
 import java.util.Set;
 
-public interface ProductExporterPort {
-    void export(Set<Product> products);
+public interface ProductPostProcessor {
+    Set<Product> process(Set<Product> products);
 }

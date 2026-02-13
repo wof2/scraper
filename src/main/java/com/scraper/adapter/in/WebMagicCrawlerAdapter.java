@@ -14,16 +14,16 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-
-import static java.util.Collections.synchronizedList;
+import java.util.Set;
 
 public class WebMagicCrawlerAdapter implements PageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(WebMagicCrawlerAdapter.class);
 
     private final Config config;
-    private final List<Product> products = synchronizedList(new ArrayList<>());
+    private final Set<Product> products = Collections.synchronizedSet(new LinkedHashSet<>());
     private final Site site;
 
     public WebMagicCrawlerAdapter(Config config) {
@@ -71,8 +71,8 @@ public class WebMagicCrawlerAdapter implements PageProcessor {
         return site;
     }
 
-    public List<Product> getProducts() {
-        return List.copyOf(products);
+    public Set<Product> getProducts() {
+        return Set.copyOf(products);
     }
 
     private String extractText(Document doc, String cssQuery) {
